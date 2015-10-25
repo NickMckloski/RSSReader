@@ -10,12 +10,19 @@ namespace RSSReader.Core.SQL
 {
     public static class SQL
     {
+        /// <summary>
+        /// Returns the location of the sqlite file
+        /// </summary>
+        /// <returns></returns>
         public static string datalocation()
         {
             string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return "Data Source=" + dir + "\\rssfeeds.sqlite;";
         }
 
+        /// <summary>
+        /// Loads the feeds from the sqlite db
+        /// </summary>
         public static void loadFeeds()
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
@@ -34,6 +41,9 @@ namespace RSSReader.Core.SQL
             sqlConn.Close();
         }
 
+        /// <summary>
+        /// Saves to sqlite db
+        /// </summary>
         public static void save()
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
@@ -59,6 +69,10 @@ namespace RSSReader.Core.SQL
             sqlConn.Close();
         }
 
+        /// <summary>
+        /// Removes the given feed
+        /// </summary>
+        /// <param name="feed">Feed to remove</param>
         public static void remove(Feed feed)
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
@@ -74,6 +88,11 @@ namespace RSSReader.Core.SQL
             sqlConn.Close();
         }
 
+        /// <summary>
+        /// Renames a given feed
+        /// </summary>
+        /// <param name="oldName">The "old" name fo the feed</param>
+        /// <param name="feed">Feed object being used</param>
         public static void rename(string oldName, Feed feed)
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
