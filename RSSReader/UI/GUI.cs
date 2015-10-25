@@ -5,20 +5,24 @@ using System.ServiceModel.Syndication;
 using System.Drawing;
 using RSSReader.Core;
 using System.Collections.Generic;
+using RSSReader.Core.SQL;
 
 namespace RSSReader
 {
     public partial class GUI : Form
     {
+        /// <summary>
+        /// A list of the feeds being used
+        /// </summary>
+        public static List<Feed> feeds = new List<Feed>();
+
         public GUI()
         {
             InitializeComponent();
+            
+            SQL.loadFeeds();
+            initializeFeeds();
         }
-
-        /// <summary>
-        /// A list of the feeds currently open
-        /// </summary>
-        private static List<Feed> feeds = new List<Feed>();
 
         /// <summary>
         /// Searches the list of feeds for one that matches the given name
@@ -36,6 +40,19 @@ namespace RSSReader
         }
 
         /// <summary>
+        /// If feeds have been loaded from sql this will add them to the ui
+        /// </summary>
+        public void initializeFeeds()
+        {
+            foreach (Feed f in feeds)
+            {
+                TabPage newPage = new TabPage(f.Name);
+                newPage.Name = f.Name;
+                createRssFeed(f.Link, newPage, false);
+            }
+        }
+
+        /// <summary>
         /// Button to add a feed
         /// </summary>
         /// <param name="sender">Object sending the event</param>
@@ -48,6 +65,7 @@ namespace RSSReader
             TabPage newPage = new TabPage(name);
             newPage.Name = name;
             createRssFeed(link, newPage, false);
+            SQL.save();
         }
 
         /// <summary>
@@ -57,8 +75,10 @@ namespace RSSReader
         /// <param name="e">Arguments of the event</param>
         private void removeButton_Click(object sender, EventArgs e)
         {
-            feeds.Remove(getFeed(tabControl1.SelectedTab.Name));
+            Feed toRemove = getFeed(tabControl1.SelectedTab.Name);
+            feeds.Remove(toRemove);
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            SQL.remove(toRemove);
         }
 
         /// <summary>
@@ -80,10 +100,12 @@ namespace RSSReader
         /// <param name="e">Arguments of the event</param>
         private void editButton_Click(object sender, EventArgs e)
         {
-            string newName = newNameBox.Text;
             Feed selectedFeed = getFeed(tabControl1.SelectedTab.Name);
+            string newName = newNameBox.Text;
+            string oldName = selectedFeed.Name;
             selectedFeed.Name = newName;
             tabControl1.SelectedTab.Text = newName;
+            SQL.rename(oldName, selectedFeed);
         }
 
         /// <summary>
