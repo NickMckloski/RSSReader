@@ -15,8 +15,14 @@ namespace RSSReader
             InitializeComponent();
         }
 
+        /// <summary>
+        /// A list of the feeds currently open
+        /// </summary>
         private static List<Feed> feeds = new List<Feed>();
 
+        /// <summary>
+        /// Searches the list of feeds for one that matches the given name
+        /// </summary>
         private Feed getFeed(string name)
         {
             foreach(Feed f in feeds)
@@ -29,6 +35,11 @@ namespace RSSReader
             return null;
         }
 
+        /// <summary>
+        /// Button to add a feed
+        /// </summary>
+        /// <param name="sender">Object sending the event</param>
+        /// <param name="e">Arguments of the event</param>
         private void addButton_Click(object sender, EventArgs e)
         {
             string name = nameBox.Text;
@@ -36,22 +47,37 @@ namespace RSSReader
             feeds.Add(new Feed(name, link));
             TabPage newPage = new TabPage(name);
             newPage.Name = name;
-            CreateRssFeed(link, newPage, false);
+            createRssFeed(link, newPage, false);
         }
 
+        /// <summary>
+        /// Button to delete a feed
+        /// </summary>
+        /// <param name="sender">Object sending the event</param>
+        /// <param name="e">Arguments of the event</param>
         private void removeButton_Click(object sender, EventArgs e)
         {
             feeds.Remove(getFeed(tabControl1.SelectedTab.Name));
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
         }
 
+        /// <summary>
+        /// Button to refresh the selected feed
+        /// </summary>
+        /// <param name="sender">Object sending the event</param>
+        /// <param name="e">Arguments of the event</param>
         private void refreshButton_Click(object sender, EventArgs e)
         {
             tabControl1.SelectedTab.Controls.Clear();
             Feed selectedFeed = getFeed(tabControl1.SelectedTab.Name);
-            CreateRssFeed(selectedFeed.Link, tabControl1.SelectedTab, true);
+            createRssFeed(selectedFeed.Link, tabControl1.SelectedTab, true);
         }
 
+        /// <summary>
+        /// Button to edit the selected feed
+        /// </summary>
+        /// <param name="sender">Object sending the event</param>
+        /// <param name="e">Arguments of the event</param>
         private void editButton_Click(object sender, EventArgs e)
         {
             string newName = newNameBox.Text;
@@ -60,7 +86,13 @@ namespace RSSReader
             tabControl1.SelectedTab.Text = newName;
         }
 
-        private void CreateRssFeed(string link, TabPage page, bool refresh)
+        /// <summary>
+        /// Logic that creates a new rss feed
+        /// </summary>
+        /// <param name="link">Link to the feed</param>
+        /// <param name="page">The tabpage that will be used for the feed</param>
+        /// <param name="refresh">Boolean to represent if this is a refresh of an existing feed or a new feed</param>
+        private void createRssFeed(string link, TabPage page, bool refresh)
         {
             try {
                 XmlReader reader = XmlReader.Create(link);
