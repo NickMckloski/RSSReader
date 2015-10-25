@@ -11,9 +11,9 @@ using System.Xml;
 
 namespace RSSReader
 {
-    public partial class Form1 : Form
+    public partial class GUI : Form
     {
-        public Form1()
+        public GUI()
         {
             InitializeComponent();
         }
