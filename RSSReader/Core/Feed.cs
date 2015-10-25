@@ -9,7 +9,7 @@ namespace RSSReader.Core
     /// <summary>
     /// A class that represents an rss feed
     /// </summary>
-    public class Feed
+    class Feed
     {
 
         private string name;
