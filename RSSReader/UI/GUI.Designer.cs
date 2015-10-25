@@ -39,6 +39,7 @@
             this.editButton = new System.Windows.Forms.Button();
             this.newNameLabel = new System.Windows.Forms.Label();
             this.newNameBox = new System.Windows.Forms.TextBox();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -68,9 +69,9 @@
             // 
             // removeButton
             // 
-            this.removeButton.Location = new System.Drawing.Point(13, 254);
+            this.removeButton.Location = new System.Drawing.Point(15, 254);
             this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(62, 23);
+            this.removeButton.Size = new System.Drawing.Size(60, 23);
             this.removeButton.TabIndex = 4;
             this.removeButton.Text = "Remove";
             this.removeButton.UseVisualStyleBackColor = true;
@@ -136,11 +137,22 @@
             this.newNameBox.Size = new System.Drawing.Size(138, 20);
             this.newNameBox.TabIndex = 11;
             // 
+            // refreshButton
+            // 
+            this.refreshButton.Location = new System.Drawing.Point(92, 254);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(60, 23);
+            this.refreshButton.TabIndex = 12;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 387);
+            this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.newNameBox);
             this.Controls.Add(this.newNameLabel);
             this.Controls.Add(this.editButton);
@@ -153,7 +165,7 @@
             this.Controls.Add(this.linkBox);
             this.Controls.Add(this.tabControl1);
             this.Name = "GUI";
-            this.Text = "Form1";
+            this.Text = "RSS Reader";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,6 +183,7 @@
         private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Label newNameLabel;
         private System.Windows.Forms.TextBox newNameBox;
+        private System.Windows.Forms.Button refreshButton;
     }
 }
 

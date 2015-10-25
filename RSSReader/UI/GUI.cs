@@ -4,6 +4,7 @@ using System.Xml;
 using System.ServiceModel.Syndication;
 using System.Drawing;
 using RSSReader.Core;
+using System.Collections.Generic;
 
 namespace RSSReader
 {
@@ -14,25 +15,52 @@ namespace RSSReader
             InitializeComponent();
         }
 
-        private void addButton_Click(object sender, EventArgs e)
+        private static List<Feed> feeds = new List<Feed>();
+
+        private Feed getFeed(string name)
         {
-            TabPage newPage = new TabPage(nameBox.Text);
-            CreateRssFeed(linkBox.Text, newPage);
+            foreach(Feed f in feeds)
+            {
+                if(f.Name == name)
+                {
+                    return f;
+                }
+            }
+            return null;
         }
 
-
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            string name = nameBox.Text;
+            string link = linkBox.Text;
+            feeds.Add(new Feed(name, link));
+            TabPage newPage = new TabPage(name);
+            newPage.Name = name;
+            CreateRssFeed(link, newPage, false);
+        }
 
         private void removeButton_Click(object sender, EventArgs e)
         {
+            feeds.Remove(getFeed(tabControl1.SelectedTab.Name));
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedTab.Controls.Clear();
+            Feed selectedFeed = getFeed(tabControl1.SelectedTab.Name);
+            CreateRssFeed(selectedFeed.Link, tabControl1.SelectedTab, true);
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            tabControl1.SelectedTab.Text = newNameBox.Text;
+            string newName = newNameBox.Text;
+            Feed selectedFeed = getFeed(tabControl1.SelectedTab.Name);
+            selectedFeed.Name = newName;
+            tabControl1.SelectedTab.Text = newName;
         }
 
-        private void CreateRssFeed(string link, TabPage page)
+        private void CreateRssFeed(string link, TabPage page, bool refresh)
         {
             try {
                 XmlReader reader = XmlReader.Create(link);
@@ -44,9 +72,9 @@ namespace RSSReader
                 int line = 1;
                 foreach (SyndicationItem item in feed.Items)
                 {
-                    String subject = item.Title.Text;
-                    String summary = item.Summary.Text;
-                    String time = item.PublishDate.ToString();
+                    string subject = item.Title.Text;
+                    string summary = item.Summary.Text;
+                    string time = item.PublishDate.ToString();
 
                     Label subjectLabel = new Label();
                     subjectLabel.Text = subject;
@@ -76,7 +104,8 @@ namespace RSSReader
                 content.BackColor = Color.White;
                 content.Dock = DockStyle.Fill;
                 page.Controls.Add(content);
-                tabControl1.TabPages.Add(page);
+                if (!refresh)
+                    tabControl1.TabPages.Add(page);
             } catch(Exception e)
             {
                 Panel content = new Panel();
@@ -98,7 +127,8 @@ namespace RSSReader
                 content.Dock = DockStyle.Fill;
 
                 page.Controls.Add(content);
-                tabControl1.TabPages.Add(page);
+                if(!refresh)
+                    tabControl1.TabPages.Add(page);
             }
         }
     }
