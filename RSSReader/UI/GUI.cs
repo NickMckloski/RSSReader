@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.ServiceModel.Syndication;
+using System.Drawing;
+using RSSReader.Core;
 
 namespace RSSReader
 {
@@ -20,10 +16,8 @@ namespace RSSReader
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(nameBox.Text);
-            Console.WriteLine(linkBox.Text);
-            TabPage newFeed = new TabPage(nameBox.Text);
-            tabControl1.TabPages.Add(newFeed);
+            TabPage newPage = new TabPage(nameBox.Text);
+            CreateRssFeed(linkBox.Text, newPage);
         }
 
 
@@ -38,35 +32,74 @@ namespace RSSReader
             tabControl1.SelectedTab.Text = newNameBox.Text;
         }
 
-        private string ParseRss(string Link)
+        private void CreateRssFeed(string link, TabPage page)
         {
-            XmlDocument rssXmlDoc = new XmlDocument();
+            try {
+                XmlReader reader = XmlReader.Create(link);
+                SyndicationFeed feed = SyndicationFeed.Load(reader);
+                reader.Close();
 
-            // Load the RSS file from the RSS URL
-            rssXmlDoc.Load("http://feeds.feedburner.com/techulator/articles");
+                Panel content = new Panel();
 
-            // Parse the Items in the RSS file
-            XmlNodeList rssNodes = rssXmlDoc.SelectNodes("rss/channel/item");
+                int line = 1;
+                foreach (SyndicationItem item in feed.Items)
+                {
+                    String subject = item.Title.Text;
+                    String summary = item.Summary.Text;
+                    String time = item.PublishDate.ToString();
 
-            StringBuilder rssContent = new StringBuilder();
+                    Label subjectLabel = new Label();
+                    subjectLabel.Text = subject;
+                    subjectLabel.AutoSize = true;
+                    subjectLabel.Font = new Font(subjectLabel.Font, FontStyle.Bold);
+                    subjectLabel.Location = new Point(10, line * 20); line++;
 
-            // Iterate through the items in the RSS file
-            foreach (XmlNode rssNode in rssNodes)
+                    Label timeLabel = new Label();
+                    timeLabel.Text = time;
+                    timeLabel.AutoSize = true;
+                    timeLabel.Font = new Font(timeLabel.Font, FontStyle.Italic);
+                    timeLabel.Location = new Point(15, line * 20); line++;
+
+
+                    Label summaryLabel = new Label();
+                    summaryLabel.Text = Extensions.TrimEnd(summary, "<".ToCharArray()[0]);
+                    summaryLabel.AutoSize = true;
+                    summaryLabel.Location = new Point(15, line * 20); line++;
+
+
+                    content.Controls.Add(subjectLabel);
+                    content.Controls.Add(timeLabel);
+                    content.Controls.Add(summaryLabel);
+                }
+
+                content.AutoScroll = true;
+                content.BackColor = Color.White;
+                content.Dock = DockStyle.Fill;
+                page.Controls.Add(content);
+                tabControl1.TabPages.Add(page);
+            } catch(Exception e)
             {
-                XmlNode rssSubNode = rssNode.SelectSingleNode("title");
-                string title = rssSubNode != null ? rssSubNode.InnerText : "";
+                Panel content = new Panel();
 
-                rssSubNode = rssNode.SelectSingleNode("link");
-                string link = rssSubNode != null ? rssSubNode.InnerText : "";
+                Label error = new Label();
+                error.Text = "There was an error adding this Rss Feed "+link;
+                error.AutoSize = true;
+                error.Location = new Point(15, 10);
+                Label exception = new Label();
+                exception.Text = e.ToString();
+                exception.AutoSize = true;
+                exception.Location = new Point(15, 25);
 
-                rssSubNode = rssNode.SelectSingleNode("description");
-                string description = rssSubNode != null ? rssSubNode.InnerText : "";
+                content.Controls.Add(error);
+                content.Controls.Add(exception);
 
-                rssContent.Append("<a href='" + link + "'>" + title + "</a><br>" + description);
+                content.AutoScroll = true;
+                content.BackColor = Color.White;
+                content.Dock = DockStyle.Fill;
+
+                page.Controls.Add(content);
+                tabControl1.TabPages.Add(page);
             }
-
-            // Return the string that contain the RSS items
-            return rssContent.ToString();
         }
     }
 }

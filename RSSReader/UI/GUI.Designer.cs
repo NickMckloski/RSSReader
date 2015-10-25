@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.linkBox = new System.Windows.Forms.TextBox();
             this.addButton = new System.Windows.Forms.Button();
             this.removeButton = new System.Windows.Forms.Button();
@@ -40,27 +39,15 @@
             this.editButton = new System.Windows.Forms.Button();
             this.newNameLabel = new System.Windows.Forms.Label();
             this.newNameBox = new System.Windows.Forms.TextBox();
-            this.tabControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Location = new System.Drawing.Point(175, 13);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(497, 362);
             this.tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(489, 336);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // linkBox
             // 
@@ -149,7 +136,7 @@
             this.newNameBox.Size = new System.Drawing.Size(138, 20);
             this.newNameBox.TabIndex = 11;
             // 
-            // Form1
+            // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -165,9 +152,8 @@
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.linkBox);
             this.Controls.Add(this.tabControl1);
-            this.Name = "Form1";
+            this.Name = "GUI";
             this.Text = "Form1";
-            this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -175,7 +161,6 @@
 
         #endregion
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TextBox linkBox;
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button removeButton;
