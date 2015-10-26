@@ -42,7 +42,7 @@ namespace RSSReader
         /// <summary>
         /// If feeds have been loaded from sql this will add them to the ui
         /// </summary>
-        public void initializeFeeds()
+        private void initializeFeeds()
         {
             foreach (Feed f in feeds)
             {
@@ -50,6 +50,20 @@ namespace RSSReader
                 newPage.Name = f.Name;
                 createRssFeed(f.Link, newPage, false);
             }
+        }
+
+        /// <summary>
+        /// Checks current feeds for a duplicate name
+        /// </summary>
+        /// <param name="name">Name to check for</param>
+        private bool nameAlreadyExists(string name)
+        {
+            foreach (Feed f in feeds)
+            {
+                if (f.Name == name)
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -61,6 +75,13 @@ namespace RSSReader
         {
             string name = nameBox.Text;
             string link = linkBox.Text;
+
+            if(nameAlreadyExists(name))
+            {
+                MessageBox.Show("A feed with that name already exists.", "Duplicate feed name.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             feeds.Add(new Feed(name, link));
             TabPage newPage = new TabPage(name);
             newPage.Name = name;
@@ -103,9 +124,16 @@ namespace RSSReader
             Feed selectedFeed = getFeed(tabControl1.SelectedTab.Name);
             string newName = newNameBox.Text;
             string oldName = selectedFeed.Name;
+
+            if (nameAlreadyExists(newName))
+            {
+                MessageBox.Show("A feed with that name already exists.", "Duplicate feed name.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             selectedFeed.Name = newName;
             tabControl1.SelectedTab.Text = newName;
-            SQL.rename(oldName, selectedFeed);
+            SQL.rename(oldName, newName);
         }
 
         /// <summary>

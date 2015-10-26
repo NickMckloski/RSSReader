@@ -50,21 +50,13 @@ namespace RSSReader.Core.SQL
             sqlConn.Open();
             foreach (Feed f in GUI.feeds)
             {
-                SQLiteCommand cmd = new SQLiteCommand();
-                cmd = sqlConn.CreateCommand();
-
-                cmd.CommandText = "DELETE FROM feeds WHERE name=@name";
-                cmd.Parameters.AddWithValue("@name", f.Name);
-                cmd.ExecuteNonQueryAsync();
-                cmd.Dispose();
-
-                SQLiteCommand cmd2 = new SQLiteCommand();
-                cmd2 = sqlConn.CreateCommand();
-                cmd2.CommandText = "INSERT INTO feeds (name,link)  values (@name,@link)";
-                cmd2.Parameters.AddWithValue("@name", f.Name);
-                cmd2.Parameters.AddWithValue("@link", f.Link);
-                cmd2.ExecuteNonQueryAsync();
-                cmd2.Dispose();
+                using (SQLiteCommand cmd = sqlConn.CreateCommand())
+                {
+                    cmd.CommandText = "REPLACE INTO `feeds` (name, link) VALUES (@name, @link)";
+                    cmd.Parameters.AddWithValue("@name", f.Name);
+                    cmd.Parameters.AddWithValue("@link", f.Link);
+                    cmd.ExecuteNonQueryAsync();
+                }
             }
             sqlConn.Close();
         }
@@ -77,42 +69,31 @@ namespace RSSReader.Core.SQL
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
-            SQLiteCommand cmd = new SQLiteCommand();
-            cmd = sqlConn.CreateCommand();
-
-            cmd.CommandText = "DELETE FROM feeds WHERE name=@name";
-            cmd.Parameters.AddWithValue("@name", feed.Name);
-            cmd.ExecuteNonQueryAsync();
-            cmd.Dispose();
-
+            using (SQLiteCommand cmd = sqlConn.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM feeds WHERE name=@name";
+                cmd.Parameters.AddWithValue("@name", feed.Name);
+                cmd.ExecuteNonQueryAsync();
+            }
             sqlConn.Close();
         }
 
         /// <summary>
         /// Renames a given feed
         /// </summary>
-        /// <param name="oldName">The "old" name fo the feed</param>
+        /// <param name="oldName">The "old" name of the feed</param>
         /// <param name="feed">Feed object being used</param>
-        public static void rename(string oldName, Feed feed)
+        public static void rename(string oldName, string newName)
         {
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
-            SQLiteCommand cmd = new SQLiteCommand();
-            cmd = sqlConn.CreateCommand();
-
-            cmd.CommandText = "DELETE FROM feeds WHERE name=@name";
-            cmd.Parameters.AddWithValue("@name", oldName);
-            cmd.ExecuteNonQueryAsync();
-            cmd.Dispose();
-
-            SQLiteCommand cmd2 = new SQLiteCommand();
-            cmd2 = sqlConn.CreateCommand();
-            cmd2.CommandText = "INSERT INTO feeds (name,link)  values (@name,@link)";
-            cmd2.Parameters.AddWithValue("@name", feed.Name);
-            cmd2.Parameters.AddWithValue("@link", feed.Link);
-            cmd2.ExecuteNonQueryAsync();
-            cmd2.Dispose();
-
+            using (SQLiteCommand cmd = sqlConn.CreateCommand())
+            {
+                cmd.CommandText = "UPDATE feeds SET name=@newName WHERE name=@oldname";
+                cmd.Parameters.AddWithValue("@oldname", oldName);
+                cmd.Parameters.AddWithValue("@newName", newName);
+                cmd.ExecuteNonQueryAsync();
+            }
             sqlConn.Close();
         }
     }
