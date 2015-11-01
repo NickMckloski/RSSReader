@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +11,37 @@ namespace RSSReader.Core.SQL
 {
     public static class SQL
     {
+
+        public static string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
         /// <summary>
         /// Returns the location of the sqlite file
         /// </summary>
         /// <returns></returns>
         public static string datalocation()
         {
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return "Data Source=" + dir + "\\rssfeeds.sqlite;";
+        }
+
+        /// <summary>
+        /// This method will create the database file if it dosn't exist
+        /// </summary>
+        public static void createDb()
+        {
+            if (!File.Exists(dir + "\\rssfeeds.sqlite"))
+            {
+                SQLiteConnection.CreateFile(dir + "\\rssfeeds.sqlite");
+
+                SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
+                sqlConn.Open();
+
+                string sql = "CREATE TABLE feeds (name string, link string)";
+
+                SQLiteCommand command = new SQLiteCommand(sql, sqlConn);
+                command.ExecuteNonQuery();
+
+                sqlConn.Close();
+            }
         }
 
         /// <summary>
@@ -25,6 +49,7 @@ namespace RSSReader.Core.SQL
         /// </summary>
         public static void loadFeeds()
         {
+            createDb();
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
             using (SQLiteCommand cmd = sqlConn.CreateCommand())
@@ -46,6 +71,7 @@ namespace RSSReader.Core.SQL
         /// </summary>
         public static void save()
         {
+            createDb();
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
             foreach (Feed f in GUI.feeds)
@@ -67,6 +93,7 @@ namespace RSSReader.Core.SQL
         /// <param name="feed">Feed to remove</param>
         public static void remove(Feed feed)
         {
+            createDb();
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
             using (SQLiteCommand cmd = sqlConn.CreateCommand())
@@ -85,6 +112,7 @@ namespace RSSReader.Core.SQL
         /// <param name="feed">Feed object being used</param>
         public static void rename(string oldName, string newName)
         {
+            createDb();
             SQLiteConnection sqlConn = new SQLiteConnection(datalocation());
             sqlConn.Open();
             using (SQLiteCommand cmd = sqlConn.CreateCommand())
